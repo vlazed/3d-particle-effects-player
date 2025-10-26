@@ -1,6 +1,24 @@
 AddCSLuaFile()
 
 ---@class particle_player: ENT
+---@field GetTargetEntity fun(self: particle_player): targetEntity: Entity
+---@field SetTargetEntity fun(self: particle_player, targetEntity: Entity)
+---@field GetNumpadState fun(self: particle_player): numpadState: string
+---@field SetNumpadState fun(self: particle_player, numpadState: string)
+---@field GetFilePath fun(self: particle_player): filePath: string
+---@field SetFilePath fun(self: particle_player, filePath: string)
+---@field GetGamePath fun(self: particle_player): gamePath: string
+---@field SetGamePath fun(self: particle_player, gamePath: string)
+---@field GetNumpadKey fun(self: particle_player): numpadKey: integer
+---@field SetNumpadKey fun(self: particle_player, numpadKey: integer)
+---@field GetPoolSize fun(self: particle_player): poolSize: integer
+---@field SetPoolSize fun(self: particle_player, poolSize: integer)
+---@field GetRate fun(self: particle_player): rate: number
+---@field SetRate fun(self: particle_player, rate: number)
+---@field GetActive fun(self: particle_player): active: boolean
+---@field SetActive fun(self: particle_player, active: boolean)
+---@field GetToggle fun(self: particle_player): toggle: boolean
+---@field SetToggle fun(self: particle_player, toggle: boolean)
 local ENT = ENT
 
 ENT.Type = "anim"
@@ -85,12 +103,12 @@ function ENT:AttachParticle()
 		emitter:SetPos(Vector(0, 0, 0))
 		emitter:Spawn()
 		emitter:SetPos(self:GetPos())
+		emitter:SetAngles(self:GetAngles())
 		emitter:SetLifeTime(1e9)
 
 		emitter:InitializeParticles(self.particles)
 		table.insert(self.emitterPool, emitter)
 		if #self.emitterPool > self:GetPoolSize() then
-			-- print("overpooling")
 			self.emitterPool[1]:Destroy()
 			self.emitterPool[1]:Remove()
 			table.remove(self.emitterPool, 1)

@@ -14,6 +14,9 @@ TOOL.ClientConVar["filepath"] = 1
 TOOL.ClientConVar["gamepath"] = 1
 TOOL.ClientConVar["poolsize"] = 20
 
+---@class ParticleEntity: Entity
+---@field particle_player particle_player
+
 ---@param cvarName string
 ---@return string
 local function toolCVar(cvarName)
@@ -33,8 +36,13 @@ end
 ---@return boolean
 function TOOL:Reload(tr)
 	local entity = tr.Entity
+	---@cast entity ParticleEntity
 	if not IsValid(entity) or entity:IsPlayer() then
 		return false
+	end
+
+	if IsValid(entity.particle_player) then
+		entity.particle_player:Remove()
 	end
 
 	return true
@@ -46,8 +54,6 @@ end
 
 if SERVER then
 	function SpawnParticlePlayer(ply, ent, dataTable)
-		print(ply, ent, dataTable)
-		PrintTable(dataTable)
 		if
 			dataTable == nil
 			or dataTable == {}
@@ -59,7 +65,6 @@ if SERVER then
 			return
 		end
 
-		print("Spawn particle player")
 		local particlePlayer = ents.Create("particle_player")
 		if not IsValid(particlePlayer) then
 			return
@@ -86,6 +91,8 @@ if SERVER then
 
 		particlePlayer:Spawn()
 		particlePlayer:Activate()
+
+		ent.particle_player = particlePlayer
 	end
 
 	function AttachParticlePlayer(ply, ent, Data)
