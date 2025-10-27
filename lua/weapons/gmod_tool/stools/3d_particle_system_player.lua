@@ -251,7 +251,12 @@ local function fillFileTree(tree)
 	---@cast workshopNode DTree_Node
 	for _, addon in ipairs(engine.GetAddons()) do
 		local particleConfigs = file.Find("lua/particles/*", addon.title)
+		local addonNode
 		for _, particleConfig in ipairs(particleConfigs or {}) do
+			if not addonNode then
+				addonNode = workshopNode:AddNode(addon.title)
+				---@cast addonNode DTree_Node
+			end
 			addNode(workshopNode, particleConfig, "lua/particles/" .. particleConfig, addon.title)
 		end
 	end
@@ -261,8 +266,14 @@ local function fillFileTree(tree)
 	local _, addonFolders = file.Find("addons/*", "MOD")
 	for _, folder in ipairs(addonFolders or {}) do
 		local particleConfigs = file.Find("addons/" .. folder .. "/lua/particles/*", "MOD")
+		local addonNode
 		for _, particleConfig in ipairs(particleConfigs or {}) do
-			addNode(localNode, particleConfig, "addons/" .. folder .. "/lua/particles/" .. particleConfig, "MOD")
+			if not addonNode then
+				addonNode = localNode:AddNode(folder)
+				---@cast addonNode DTree_Node
+			end
+
+			addNode(addonNode, particleConfig, "addons/" .. folder .. "/lua/particles/" .. particleConfig, "MOD")
 		end
 	end
 
