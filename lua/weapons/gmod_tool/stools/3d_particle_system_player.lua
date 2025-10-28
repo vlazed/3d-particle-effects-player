@@ -221,7 +221,7 @@ if SERVER then
 	return
 end
 
-TOOL:BuildConVarList()
+local cvarList = TOOL:BuildConVarList()
 
 ---@param suffix string
 ---@return string
@@ -257,7 +257,7 @@ local function fillFileTree(tree)
 				addonNode = workshopNode:AddNode(addon.title)
 				---@cast addonNode DTree_Node
 			end
-			addNode(workshopNode, particleConfig, "lua/particles/" .. particleConfig, addon.title)
+			addNode(addonNode, particleConfig, "lua/particles/" .. particleConfig, addon.title)
 		end
 	end
 
@@ -287,12 +287,21 @@ end
 
 ---@param cPanel ControlPanel|DForm
 function TOOL.BuildCPanel(cPanel)
+	cPanel:ToolPresets("3d_particle_system_player", cvarList)
+
 	local tree = vgui.Create("DTree", cPanel)
 	tree:SizeTo(-1, 300, 0.1)
 	cPanel:AddItem(tree)
 
-	fillFileTree(tree)
+	local function refreshNodes()
+		tree:Clear()
+		fillFileTree(tree)
+	end
 
+	refreshNodes()
+
+	local button = cPanel:Button(localization("refresh"), "")
+	button.DoClick = refreshNodes
 	cPanel:KeyBinder(localization("key"), toolCVar("key"))
 	cPanel:CheckBox(localization("starton"), toolCVar("starton"))
 	cPanel:CheckBox(localization("toggle"), toolCVar("toggle"))
