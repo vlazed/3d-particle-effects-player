@@ -41,8 +41,16 @@ function TOOL:Reload(tr)
 		return false
 	end
 
-	if IsValid(entity.particle_player) then
-		entity.particle_player:Remove()
+	if CLIENT then
+		return true
+	end
+
+	-- Some addons straight up override GetChildren, so
+	-- pairs is necessary
+	for _, ent in pairs(entity:GetChildren() or {}) do
+		if ent:GetClass() == "particle_player" then
+			ent:Remove()
+		end
 	end
 
 	return true
@@ -91,8 +99,6 @@ if SERVER then
 
 		particlePlayer:Spawn()
 		particlePlayer:Activate()
-
-		ent.particle_player = particlePlayer
 	end
 
 	function AttachParticlePlayer(ply, ent, Data)
